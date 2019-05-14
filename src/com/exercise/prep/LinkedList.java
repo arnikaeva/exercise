@@ -42,9 +42,52 @@ public class LinkedList<T> {
     return (T) traverseToIndex(index);
   }
 
+  public void basicReverse() {
+    Node prev = this.head;
+    Node current = prev.next;
+    Node next;
+
+    while (current != null) {
+      next = current.next;
+      current.next = prev;
+      prev = current;
+      current = next;
+    }
+
+    this.tail = this.head;
+    this.head = prev;
+    this.tail.next = null;
+  }
+
+  public void reverse() {
+    reverseNextNodes(null, this.head);
+
+    Node oldHead = this.head;
+    this.head = this.tail;
+    this.tail = oldHead;
+  }
+
+  private Node reverseNextNodes(Node before, Node current) {
+    if (current.next != null) {
+      current = reverseNextNodes(current, current.next);
+    }
+
+    current.next = before;
+    return before;
+
+  }
+
   public void delete(int index) {
-    Node leaderNode = traverseToIndex(index - 1);
-    leaderNode.next = leaderNode.next.next;
+    if (index == 0) {
+      this.head = this.head.next;
+    } else {
+      Node leaderNode = traverseToIndex(index - 1);
+      leaderNode.next = leaderNode.next.next;
+      if (index == this.length - 1) {
+        this.tail = leaderNode;
+      }
+    }
+
     this.length --;
   }
 
@@ -102,6 +145,10 @@ public class LinkedList<T> {
     myList.insert(2, 66);
 
     myList.delete(5);
+
+    System.out.println(myList);
+
+    myList.basicReverse();
 
     System.out.println(myList);
 
