@@ -5,12 +5,14 @@ import java.util.*;
 public class Graph {
   private Node rootNode;
 
-  private Map<Node, Edge> dijkstraPathes;
+  private Map<Node, Edge> dijkstraPaths;
+  private Map<Node, Integer> bellmannFordPaths;
 
   private List<Node> nodes;
 
   public Graph() {
-    this.dijkstraPathes = new HashMap<>();
+    this.dijkstraPaths = new HashMap<>();
+    this.bellmannFordPaths = new HashMap<>();
     this.nodes = new ArrayList<>();
   }
 
@@ -23,8 +25,8 @@ public class Graph {
   }
 
   public int shortestPathWithDijkstra(Node destination) {
-    if (dijkstraPathes.containsKey(destination)) {
-      return dijkstraPathes.get(destination).getWeight();
+    if (dijkstraPaths.containsKey(destination)) {
+      return dijkstraPaths.get(destination).getWeight();
     }
 
     Set<Node> visited = new HashSet<>();
@@ -42,7 +44,7 @@ public class Graph {
         int originalDistance = getCurrentShortestPath(edge.getNode());
 
         if (newDistance < originalDistance) {
-          dijkstraPathes.put(edge.getNode(), new Edge(newDistance, currentNode));
+          dijkstraPaths.put(edge.getNode(), new Edge(newDistance, currentNode));
         }
       }
       visited.add(currentNode);
@@ -50,28 +52,62 @@ public class Graph {
       currentNode = getNextNodeToVisit(unvisited);
     }
 
-    return dijkstraPathes.get(destination).getWeight();
+    return dijkstraPaths.get(destination).getWeight();
+  }
+
+  public int shortesPathWithBellmannFord(Node destination) {
+    initBellmannFord();
+
+    boolean changedSomething = true;
+    int iteration = 0;
+    while (changedSomething && iteration < nodes.size() - 1) {
+      changedSomething = false;
+      for (Node currentNode : nodes) {
+        for(Edge edge : currentNode.getEdges()) {
+          int originalDistance = bellmannFordPaths.get(edge.getNode());
+          int newDistance = bellmannFordPaths.get(currentNode) + edge.getWeight();
+
+          if (newDistance < originalDistance) {
+            bellmannFordPaths.put(edge.getNode(), newDistance);
+            changedSomething = true;
+          }
+        }
+        iteration++;
+      }
+    }
+
+    return bellmannFordPaths.get(destination);
+  }
+
+  private void initBellmannFord() {
+    for (Node node : nodes) {
+      if (node != rootNode) {
+        bellmannFordPaths.put(node, Integer.MAX_VALUE);
+      }
+    }
+
+    bellmannFordPaths.put(rootNode, 0);
   }
 
   private void initDijkstra() {
     for (Node node : nodes) {
       if (node != rootNode) {
-        dijkstraPathes.put(node, new Edge(Integer.MAX_VALUE, null));
+        dijkstraPaths.put(node, new Edge(Integer.MAX_VALUE, null));
       }
     }
 
-    dijkstraPathes.put(rootNode, new Edge(0, null));
+    dijkstraPaths.put(rootNode, new Edge(0, null));
   }
 
   private int getCurrentShortestPath(Node n) {
-    return dijkstraPathes.get(n).getWeight();
+    return dijkstraPaths.get(n).getWeight();
   }
 
   private Node getNextNodeToVisit(Set<Node> unvisitedNodes) {
     Edge minimumPath = null;
     Node minimumNode = null;
     for (Node node : unvisitedNodes) {
-      Edge currentPath = dijkstraPathes.get(node);
+      Edge currentPath = dijkstraPaths.get(node);
       if (minimumPath == null) {
         minimumPath = currentPath;
         minimumNode = node;
@@ -127,6 +163,6 @@ public class Graph {
     graph.addNode(new Node("F"));
 
 
-    System.out.println(graph.shortestPathWithDijkstra(nodeF));
+    System.out.println(graph.shortesPathWithBellmannFord(nodeE));
   }
 }
