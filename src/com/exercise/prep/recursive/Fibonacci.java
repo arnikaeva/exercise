@@ -1,6 +1,12 @@
 package com.exercise.prep.recursive;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+
 public class Fibonacci {
+
+  static Map<Integer, Integer> cache = new HashMap<>();
 
   public static int iterative(int n) {
     int[] numbers = new int[n + 1];
@@ -24,9 +30,24 @@ public class Fibonacci {
     }
   }
 
+  public static int recursiveWithMemoization(int n) {
+    if (cache.containsKey(n)) {
+      return cache.get(n);
+    }
+
+    if (n == 0 || n == 1) {
+      return n;
+    } else {
+      cache.put(n, recursive(n - 1) + recursive(n - 2));
+      return cache.get(n);
+    }
+  }
+
   public static void main(String[] args) {
     System.out.println(recursive(12));
-    System.out.println(iterative(12));
+    System.out.println(iterative(1));
+    System.out.println(recursiveWithMemoization(40));
+
 
   }
 }
