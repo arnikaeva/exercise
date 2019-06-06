@@ -7,8 +7,8 @@ import java.util.Objects;
 public class Node {
 
   private String label;
-
   private List<Edge> edges;
+  private boolean visited;
 
   public Node(String label) {
     this.label = label;
@@ -25,6 +25,14 @@ public class Node {
 
   public String getLabel() {
     return label;
+  }
+
+  public boolean isVisited() {
+    return visited;
+  }
+
+  public void setVisited(boolean visited) {
+    this.visited = visited;
   }
 
   @Override

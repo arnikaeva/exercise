@@ -1,5 +1,7 @@
 package com.exercise.graphs;
 
+import com.exercise.graphs.problem.RouteBetweenNodes;
+
 import java.util.*;
 
 public class Graph {
@@ -123,6 +125,14 @@ public class Graph {
     return minimumNode;
   }
 
+  public List<Node> getNodes() {
+    return nodes;
+  }
+
+  public Node getRootNode() {
+    return rootNode;
+  }
+
   public static void main(String[] args) {
     Graph graph = new Graph();
 
@@ -138,6 +148,9 @@ public class Graph {
 
     rootNodeA.addEdge(new Edge(7, nodeB));
     nodeB.addEdge(new Edge(7, rootNodeA));
+
+    //rootNodeA.addEdge(new Edge(7, nodeF));
+    //nodeF.addEdge(new Edge(7, rootNodeA));
 
     nodeC.addEdge(new Edge(1, nodeB));
     nodeB.addEdge(new Edge(1, nodeC));
@@ -163,6 +176,13 @@ public class Graph {
     graph.addNode(new Node("F"));
 
 
-    System.out.println(graph.shortesPathWithBellmannFord(nodeE));
+    //System.out.println(graph.shortesPathWithBellmannFord(nodeE));
+
+    TraversalService service = new TraversalService();
+
+    service.depthFirstSearch(rootNodeA);
+
+    RouteBetweenNodes routeBetweenNodes = new RouteBetweenNodes();
+    System.out.println(routeBetweenNodes.isConnected(graph, rootNodeA, nodeF));
   }
 }
